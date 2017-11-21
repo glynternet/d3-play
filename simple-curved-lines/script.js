@@ -1,22 +1,27 @@
-var margin = {top: 20, right: 20, bottom: 20, left: 20},
-  width = 2000 - margin.left - margin.right,
-  height = 1000 - margin.top - margin.bottom;
+const lines = 300;
+const period = 4;
+const skew = 200;
+const secondPointDistance = 100;
+
+var x = function(i, skewCoefficient) {
+	return (i + skew * skewCoefficient) * period;
+};
+
+var margin = {top: 20, right: 20, bottom: 20, left: 20};
+var width = x(lines-1, 1) + margin.left + margin.right;
+var height = 1000 - margin.top - margin.bottom;
 
 var svg = d3.select("body").append("svg")
-  .attr("width", width + margin.left + margin.right)
+  .attr("width", width)
   .attr("height", height + margin.top + margin.bottom)
 .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-const period = 6;
-const lines = 100;
-const skew = 200;
-const secondPointDistance = 100;
 
 function newLineData(i) {
 	phase = Math.PI / 2 * i / (lines - 1); //Needs to be (lines - 1) here so that the last line ends up vertically straight
-	x1 = (i + skew * Math.sin(phase)) * period;
-	x2 = (i + skew * (1 - Math.cos(phase))) * period;
+	x1 = x(i, Math.sin(phase));
+	x2 = x(i, 1 - Math.cos(phase));
 	return {"line":[
 		{ "x": x1,   "y": 0},
 		{ "x": x1,   "y": secondPointDistance},
@@ -34,10 +39,9 @@ for (var i = 0; i < lines; i++) {
 
 //This is the accessor function we talked about above
 var lineFunction = d3.line()
-	.x(function(d) { 
-		return d.x; 
-	})
-	.y(function(d) { return d.y; });
+	.x(function(d) { return d.x; })
+	.y(function(d) { return d.y; })
+	.curve(d3.curveCatmullRom.alpha(1));
 
 var colourScale = d3.scaleLinear()
 	.domain([0, lines-1])
@@ -70,7 +74,7 @@ path.enter().append("path")
         	console.log(i);
         	return colourScale(i);
         })
-        .attr("stroke-width", 5)
+        .attr("stroke-width", 4)
         .attr("fill", "none")
 	.merge(path);
 
