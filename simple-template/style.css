@@ -1,0 +1,13 @@
+body {
+  font: 10px "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.axis path {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
