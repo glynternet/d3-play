@@ -1,8 +1,8 @@
 var margin = {top: 20, right: 20, bottom: 20, left: 20};
-var width = 1920;
-var height = 1080 - margin.top - margin.bottom;
-const lines = 400;
-const skew = 300;
+var width = 3200;
+var height = 2258 - margin.top - margin.bottom;
+const lines = 180;
+const skew = 60;
 const period = (width - (margin.left + margin.right)) / (lines - 1 + skew);
 const secondPointDistance = 100;
 
@@ -47,7 +47,6 @@ var colourScale = d3.scaleLinear()
 	.range([
 		d3.hsl(25, 1, 0.6),
 		d3.hsl(358, 1, 0.65)
-		// d3.hsl(0, 1, 0.65)
 	 ]);
 
 // DATA JOIN
@@ -73,7 +72,7 @@ path.enter().append("path")
         .attr("stroke", function(d,i){
         	return colourScale(i);
         })
-        .attr("stroke-width", 2)
+        .attr("stroke-width", 8)
         .attr("fill", "none")
 	.merge(path);
 
