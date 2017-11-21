@@ -1,15 +1,14 @@
-const lines = 300;
-const period = 4;
-const skew = 200;
+var margin = {top: 20, right: 20, bottom: 20, left: 20};
+var width = 1920;
+var height = 1080 - margin.top - margin.bottom;
+const lines = 400;
+const skew = 300;
+const period = (width - (margin.left + margin.right)) / (lines - 1 + skew);
 const secondPointDistance = 100;
 
 var x = function(i, skewCoefficient) {
 	return (i + skew * skewCoefficient) * period;
 };
-
-var margin = {top: 20, right: 20, bottom: 20, left: 20};
-var width = x(lines-1, 1) + margin.left + margin.right;
-var height = 1000 - margin.top - margin.bottom;
 
 var svg = d3.select("body").append("svg")
   .attr("width", width)
@@ -46,8 +45,9 @@ var lineFunction = d3.line()
 var colourScale = d3.scaleLinear()
 	.domain([0, lines-1])
 	.range([
-		d3.hsl(35, 1, 0.68),
-		d3.hsl(355, 1, 0.3)
+		d3.hsl(25, 1, 0.6),
+		d3.hsl(358, 1, 0.65)
+		// d3.hsl(0, 1, 0.65)
 	 ]);
 
 // DATA JOIN
@@ -71,10 +71,9 @@ path.enter().append("path")
 			return lineFunction(d.line);
 			 })
         .attr("stroke", function(d,i){
-        	console.log(i);
         	return colourScale(i);
         })
-        .attr("stroke-width", 4)
+        .attr("stroke-width", 2)
         .attr("fill", "none")
 	.merge(path);
 
