@@ -1,10 +1,6 @@
 var margin = { top: 20, right: 20, bottom: 20, left: 20 };
 var height = 700 - margin.top - margin.bottom;
 
-var t = d3.transition()
-    .duration(750)
-    .ease(d3.easeLinear);
-
 var svg = d3.select("svg")
     // .attr("width", "100%")
     .attr("height", height + margin.top + margin.bottom)
@@ -70,6 +66,10 @@ function update(chart) {
             return d;
         });
 
+	var t = d3.transition()
+	    .duration(400)
+	    .ease(d3.easeLinear);
+
     // UPDATE
     // Update old elements as needed.
     path.attr("class", "update");
@@ -84,13 +84,12 @@ function update(chart) {
         .attr("class", "enter")
         .attr("stroke-width", 2)
         .attr("fill", "none")
+        .attr("stroke", "white")
         .merge(path)
-        .attr("stroke", function(d, i) {
-            return colourScale(i);
-        })
-        .attr("d", function(d, i) {
-            return lineFunction(newLineData(d).line);
-        });
+        .transition(t)
+    		.attr("stroke", function(d, i) {return colourScale(i);})
+	        .attr("d", function(d, i) {return lineFunction(newLineData(d).line);})
+        ;
 
     // EXIT
     // Remove old elements as needed.
