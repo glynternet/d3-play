@@ -9,21 +9,34 @@
     <meta http-equiv="Expires" content="0" />
     <title>Title</title>
     <link type="text/css" rel="stylesheet" href="style.css" />
-    <script src="/d3.v4.min.js"></script>
+    <script src="../d3.v4.min.js"></script>
+    <style type="text/css">
+    * {
+        box-sizing: border-box;
+    }
+    /* input [type="range"] { */
+
+    input {
+        width: 98%;
+    }
+    </style>
 </head>
 
 <body>
-    <svg></svg>
+    <svg id="chart-svg" width="100%"></svg>
     <div id="slidecontainer">
         <input type="range" min="2" max="300" value="50" class="slider" id="lines-range">
         <p>Lines: <span id="lines-text"></span></p>
         <input type="range" min="2" max="1000" value="50" class="slider" id="skew-range">
         <p>Skew: <span id="skew-text"></span></p>
+        <input type="range" min="2" max="1000" value="50" class="slider" id="secondPointDistance-range">
+        <p>Second Point Distance: <span id="secondPointDistance-text"></span></p>
     </div>
     <script>
     var chart = {
-      "lines":100,
-      "skew":300
+        "lines": 100,
+        "skew": 300,
+        "secondPointDistance": 150
     };
 
     var linesSlider = document.getElementById("lines-range");
@@ -44,9 +57,16 @@
         update(chart);
     };
 
+    var secondPointDistanceSlider = document.getElementById("secondPointDistance-range");
+    var secondPointDistanceOutput = document.getElementById("secondPointDistance-text");
+    secondPointDistanceOutput.innerHTML = secondPointDistanceSlider.value;
+    secondPointDistanceSlider.oninput = function() {
+        secondPointDistanceOutput.innerHTML = this.value;
+        chart.secondPointDistance = this.value;
+        update(chart);
+    };
     </script>
     <script src="script.js"></script>
-
 </body>
 
 </html>
