@@ -1,12 +1,20 @@
+var margin = {top: 20, right: 20, bottom: 20, left: 20};
+var width = 1000;
+var height = 700 - margin.top - margin.bottom;
+	
+var svg = d3.select("svg")
+	  .attr("width", width)
+	  .attr("height", height + margin.top + margin.bottom)
+	.append("g")
+	  .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	  .attr("class", "chart");
+
 function update(lines) {
 	console.log("received lines: " + lines);
 	if (lines != parseInt(lines, 10)) {
 		console.log("variables lines is not an integer");
 		return;
 	}
-	var margin = {top: 20, right: 20, bottom: 20, left: 20};
-	var width = 1000;
-	var height = 700 - margin.top - margin.bottom;
 	const skew = 300;
 	const period = (width - (margin.left + margin.right)) / (lines - 1 + skew);
 	const secondPointDistance = 150;
@@ -17,12 +25,7 @@ function update(lines) {
 		return (i + skew * skewCoefficient) * period;
 	};
 
-	var svg = d3.select("svg")
-	  .attr("width", width)
-	  .attr("height", height + margin.top + margin.bottom)
-	.append("g")
-	  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
+	var svg = d3.select("svg g.chart");
 
 	function newLineData(i) {
 		phase = Math.PI / 2 * i / (lines - 1); //Needs to be (lines - 1) here so that the last line ends up vertically straight
@@ -40,7 +43,7 @@ function update(lines) {
 	var data = [];
 
 	for (var i = 0; i < lines; i++) {
-		data.push(newLineData(i));
+		data.push(i);
 	}
 
 	//This is the accessor function we talked about above
@@ -56,7 +59,8 @@ function update(lines) {
 	// DATA JOIN
 	// Join new data with old elements, if any.
 	var path = svg.selectAll("path")
-		.data(data, function(d){ return d; });
+		.data(data, function(d){ 
+			return d; });
 
 	// UPDATE
 	// Update old elements as needed.
@@ -70,15 +74,15 @@ function update(lines) {
 	// apply operations to both.
 	path.enter().append("path")
 			.attr("class", "enter")
-			.attr("d", function(d, i){ 
-				return lineFunction(d.line);
-				 })
-	        .attr("stroke", function(d,i){
-	        	return colourScale(i);
-	        })
 	        .attr("stroke-width", 2)
 	        .attr("fill", "none")
-		.merge(path);
+		.merge(path)
+		.attr("stroke", function(d,i){
+	        	return colourScale(i);
+	        })
+		.attr("d", function(d, i){ 
+				return lineFunction(newLineData(d).line);
+				 });
 
 	// EXIT
 	// Remove old elements as needed.
