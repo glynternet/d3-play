@@ -10,6 +10,7 @@
     <title>Title</title>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <script src="../d3.v4.min.js"></script>
+
     <style type="text/css">
     * {
         box-sizing: border-box;
@@ -25,14 +26,15 @@
 <body>
     <svg id="chart-svg" width="100%"></svg>
     <div id="slidecontainer">
-        <input type="range" min="2" max="300" value="50" class="slider" id="lines-range">
+        <input type="range" min="2" max="600" value="100" class="slider" id="lines-range">
         <p>Lines: <span id="lines-text"></span></p>
-        <input type="range" min="2" max="1000" value="50" class="slider" id="skew-range">
+        <input type="range" min="0" max="1000" value="300" class="slider" id="skew-range">
         <p>Skew: <span id="skew-text"></span></p>
-        <input type="range" min="2" max="1000" value="50" class="slider" id="secondPointDistance-range">
+        <input type="range" min="1" max="700" value="150" class="slider" id="secondPointDistance-range">
         <p>Second Point Distance: <span id="secondPointDistance-text"></span></p>
     </div>
     <script>
+
     var chart = {
         "lines": 100,
         "skew": 300,

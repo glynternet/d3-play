@@ -16,7 +16,6 @@ function update(chart) {
     }
 
     var width = document.getElementById("chart-svg").width.animVal.value;
-    console.log("width: " + width);
 
     const period = (width - (margin.left + margin.right)) / (chart.lines - 1 + +chart.skew);
     const c1 = d3.hsl(25, 1, 0.6);
