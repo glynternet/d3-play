@@ -31,7 +31,7 @@ var line = d3.line()
 
 var data;
 // load the external data
-d3.json("http://localhost:8004", function(error, d) {
+d3.json("http://localhost:8004/money.json", function(error, d) {
   data = d.total.balances;
   // update here because the call is asynchronous and otherwise the data might not be yet downloaded
   update(data);
@@ -56,7 +56,7 @@ function update(data) {
       .attr("y", 6)
       .attr("dy", "0.71em")
       .attr("text-anchor", "end")
-      .text("Price ($)");
+      .text("Balance (£)");
 
   g.append("path")
       .datum(data)
