@@ -9,26 +9,25 @@ var svg = d3.select("svg")
 	  .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
 	  .attr("class", "chart");
 
-function update(lines) {
-	console.log("received lines: " + lines);
-	if (lines != parseInt(lines, 10)) {
-		console.log("variables lines is not an integer");
+function update(chart) {
+	console.log(chart);
+	if (chart.lines != parseInt(chart.lines, 10)) {
+		console.log("variables chart.lines is not an integer");
 		return;
 	}
-	const skew = 300;
-	const period = (width - (margin.left + margin.right)) / (lines - 1 + skew);
+	const period = (width - (margin.left + margin.right)) / (chart.lines - 1 + +chart.skew);
 	const secondPointDistance = 150;
 	const c1 = d3.hsl(25, 1, 0.6);
 	const c2 = d3.rgb(255,0,0);
 
 	var x = function(i, skewCoefficient) {
-		return (i + skew * skewCoefficient) * period;
+		return (i + +chart.skew * skewCoefficient) * period;
 	};
 
 	var svg = d3.select("svg g.chart");
 
 	function newLineData(i) {
-		phase = Math.PI / 2 * i / (lines - 1); //Needs to be (lines - 1) here so that the last line ends up vertically straight
+		phase = Math.PI / 2 * i / (chart.lines - 1); //Needs to be (chart.lines - 1) here so that the last line ends up vertically straight
 		x1 = x(i, Math.sin(phase));
 		x2 = x(i, 1 - Math.cos(phase));
 		return {"line":[
@@ -42,7 +41,7 @@ function update(lines) {
 	//The data for our line
 	var data = [];
 
-	for (var i = 0; i < lines; i++) {
+	for (var i = 0; i < chart.lines; i++) {
 		data.push(i);
 	}
 
@@ -53,7 +52,7 @@ function update(lines) {
 		.curve(d3.curveCatmullRom.alpha(1));
 
 	var colourScale = d3.scaleLinear()
-		.domain([0, lines-1])
+		.domain([0, chart.lines-1])
 		.range([c1,c2]);
 
 	// DATA JOIN
@@ -88,14 +87,3 @@ function update(lines) {
 	// Remove old elements as needed.
 	path.exit().remove();
 }
-
-// var slider = document.getElementById("lines-slider");
-// console.log(slider);
-// slider.value = 150;
-// var output = document.getElementById("demo");
-// output.innerHTML = slider.value; // Display the default slider value
-
-// // Update the current slider value (each time you drag the slider handle)
-// slider.oninput = function() {
-// 	update(this.value);
-// };

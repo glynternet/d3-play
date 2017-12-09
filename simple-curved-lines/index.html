@@ -15,18 +15,35 @@
 <body>
     <svg></svg>
     <div id="slidecontainer">
-        <input type="range" min="1" max="100" value="50" class="slider" id="myRange">
-        <p>Lines: <span id="demo"></span></p>
+        <input type="range" min="2" max="300" value="50" class="slider" id="lines-range">
+        <p>Lines: <span id="lines-text"></span></p>
+        <input type="range" min="2" max="1000" value="50" class="slider" id="skew-range">
+        <p>Skew: <span id="skew-text"></span></p>
     </div>
     <script>
-    var slider = document.getElementById("myRange");
-    var output = document.getElementById("demo");
-    output.innerHTML = slider.value;
-
-    slider.oninput = function() {
-        output.innerHTML = this.value;
-        update(this.value);
+    var chart = {
+      "lines":100,
+      "skew":300
     };
+
+    var linesSlider = document.getElementById("lines-range");
+    var linesOutput = document.getElementById("lines-text");
+    linesOutput.innerHTML = linesSlider.value;
+    linesSlider.oninput = function() {
+        linesOutput.innerHTML = this.value;
+        chart.lines = this.value;
+        update(chart);
+    };
+
+    var skewSlider = document.getElementById("skew-range");
+    var skewOutput = document.getElementById("skew-text");
+    skewOutput.innerHTML = skewSlider.value;
+    skewSlider.oninput = function() {
+        skewOutput.innerHTML = this.value;
+        chart.skew = this.value;
+        update(chart);
+    };
+
     </script>
     <script src="script.js"></script>
 
