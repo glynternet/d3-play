@@ -1,5 +1,4 @@
 function update(chart) {
-    console.log(chart);
     if (chart.lines != parseInt(chart.lines, 10)) {
         console.log("variables chart.lines is not an integer");
         return;
@@ -20,23 +19,6 @@ function update(chart) {
     if (svg === null) {
         console.log("Unable to find " + chart.selector);
         return;
-    }
-
-    // newLineData calculates the points on a line from the index of the line.
-    function newLineData(i) {
-        // phase is the radian representation data point that is being drawn.
-        // Where the first data point would be 0PI and the last one would be 2PI.
-        phase = Math.PI / 2 * i / (chart.lines - 1); //Needs to be (chart.lines - 1) here so that the last line ends up vertically straight
-        x1 = x(i, Math.sin(phase));
-        x2 = x(i, 1 - Math.cos(phase));
-        return {
-            "line": [
-                { "x": x1, "y": 0 },
-                { "x": x1, "y": height * chart.secondPointDistance },
-                { "x": x2, "y": height * (1 - chart.secondPointDistance) },
-                { "x": x2, "y": height }
-            ]
-        };
     }
 
     // The data for our lines
@@ -62,7 +44,7 @@ function update(chart) {
 
     // DATA JOIN
     // Join new data with old elements, if any.
-    var path = svg.selectAll("path")
+    var group = svg.selectAll("g")
         .data(data, function(d) {
             return d;
         });
@@ -70,56 +52,97 @@ function update(chart) {
     // create new transition instance.
     // This can't be global, it must be generated on each run of update.
     var t = d3.transition()
-        .duration(400)
-        .ease(d3.easeLinear);
+        .duration(200)
+        .ease(d3.easeQuadInOut);
 
     // UPDATE
     // Update old elements as needed.
-    path.attr("class", "update");
+    group.attr("class", "update")
+        .select("path")
+        .attr("class", "update");
+
+    group.transition(t)
+        .attr("opacity", 1);
+
+    var groupEnter = group.enter()
+        .append("g")
+        .attr("class", "enter")
+        .attr("opacity", 0);
+
+    groupEnter.transition(t)
+        .attr("opacity", 1);
 
     // ENTER
     // Create new elements as needed.
-    path.enter()
-    	.append("path")
+    var path = groupEnter
+        .append("path")
         .attr("class", "enter")
+        .attr("id", function(d, i) { return "path-" + i; })
         .attr("fill", "none")
-        .attr("stroke", "white")
-        .attr("stroke-linecap","round")
+        .attr("stroke-linecap", "round")
+        .attr("d", function(d, i) { return lineFunction(newLineData(chart.lines - 1, x).line); });
 
     // ENTER + UPDATE
     // After merging the entered elements with the update selection,
     // apply operations to both.
-        .merge(path)
+    groupEnter.merge(group)
+        // .attr("opacity",1)
+        .select("path")
         .transition(t)
         .attr("stroke-width", chart.strokeWidth)
         .attr("stroke", function(d, i) { return colourScale(i); })
-        .attr("d", function(d, i) { return lineFunction(newLineData(d).line); });
+        .attr("stroke-width", chart.strokeWidth)
+        .attr("d", function(d, i) { return lineFunction(newLineData(d, x).line); });
 
     // EXIT
     // Remove old elements as needed.
-    path.exit().transition(t)
-    	// fade to transparent
-        .attr("stroke", d3.rgb(255, 255, 255, 0))
+    group.exit()
+    	.select("path")
+    	.transition(t)
+    	.attr("d", function(d, i) { return lineFunction(newLineData(chart.lines - 1, x).line); });
+
+    group.exit()
+        .attr("class", "exit")
+        .transition(t)
+        // fade to transparent
+        .attr("opacity", 0)
         .remove();
 }
 
 // a scale that maps index of a line to a colour
 function generateColourScale(colours) {
-	// if no colours given, default to black
-	if (colours === null || colours === undefined ) {
-		return function(i) { return d3.color("black"); };
-	}
-	var len = colours.length;
-	if (len == 1) {
-		return function(i) { return colours[0]; };
-	}
-	var domains = [];
-	// Push values to domains array so that we have an array containing values from 0 to number of lines.
-	// There must be the same number of elements as in the colours array
-	for (var i = 0; i < len; i++) {
-		domains.push((chart.lines - 1) * i / (len - 1));
-	}
+    // if no colours given, default to black
+    if (colours === null || colours === undefined) {
+        return function(i) { return d3.color("black"); };
+    }
+    var len = colours.length;
+    if (len == 1) {
+        return function(i) { return colours[0]; };
+    }
+    var domains = [];
+    // Push values to domains array so that we have an array containing values from 0 to number of lines.
+    // There must be the same number of elements as in the colours array
+    for (var i = 0; i < len; i++) {
+        domains.push((chart.lines - 1) * i / (len - 1));
+    }
     return d3.scaleLinear()
         .domain(domains)
         .range(colours);
+}
+
+// newLineData calculates the points on a line from the index of the line.
+function newLineData(i, xFn) {
+    // phase is the radian representation data point that is being drawn.
+    // Where the first data point would be 0PI and the last one would be 2PI.
+    phase = Math.PI / 2 * i / (chart.lines - 1); //Needs to be (chart.lines - 1) here so that the last line ends up vertically straight
+    x1 = xFn(i, Math.sin(phase));
+    x2 = xFn(i, 1 - Math.cos(phase));
+    return {
+        "line": [
+            { "x": x1, "y": 0 },
+            { "x": x1, "y": height * chart.secondPointDistance },
+            { "x": x2, "y": height * (1 - chart.secondPointDistance) },
+            { "x": x2, "y": height }
+        ]
+    };
 }
