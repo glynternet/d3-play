@@ -61,9 +61,6 @@ function update(chart) {
         .select("path")
         .attr("class", "update");
 
-    group.transition(t)
-        .attr("opacity", 1);
-
     var groupEnter = group.enter()
         .append("g")
         .attr("class", "enter")
@@ -72,15 +69,25 @@ function update(chart) {
     groupEnter.transition(t)
         .attr("opacity", 1);
 
+    var idFn = function (i) { return "path-" + i; };
+
     // ENTER
     // Create new elements as needed.
     var path = groupEnter
         .append("path")
         .attr("class", "enter")
-        .attr("id", function(d, i) { return "path-" + i; })
+        .attr("id", function(d, i) { return idFn(i); })
         .attr("fill", "none")
         .attr("stroke-linecap", "round")
         .attr("d", function(d, i) { return lineFunction(newLineData(chart.lines - 1, x).line); });
+
+    var text = groupEnter
+        .append("text")
+        .append("textPath") //append a textPath to the text element
+        .attr("xlink:href", function(d, i) { return "#" + idFn(i); } ) //place the ID of the path here
+        .style("text-anchor", "middle") //place the text halfway on the arc
+        .attr("startOffset", "50%")
+        .text("TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY");
 
     // ENTER + UPDATE
     // After merging the entered elements with the update selection,
@@ -90,16 +97,24 @@ function update(chart) {
         .select("path")
         .transition(t)
         .attr("stroke-width", chart.strokeWidth)
-        .attr("stroke", function(d, i) { return colourScale(i); })
+        .attr("stroke", "none")
+        // .attr("stroke", function(d, i) { return colourScale(i); })
         .attr("stroke-width", chart.strokeWidth)
         .attr("d", function(d, i) { return lineFunction(newLineData(d, x).line); });
+
+    groupEnter.merge(group)
+        // .attr("opacity",1)
+        .select("text")
+        .transition(t)
+        .attr("stroke", function(d, i) { return colourScale(i); });
+
 
     // EXIT
     // Remove old elements as needed.
     group.exit()
-    	.select("path")
-    	.transition(t)
-    	.attr("d", function(d, i) { return lineFunction(newLineData(chart.lines - 1, x).line); });
+        .select("path")
+        .transition(t)
+        .attr("d", function(d, i) { return lineFunction(newLineData(chart.lines - 1, x).line); });
 
     group.exit()
         .attr("class", "exit")
