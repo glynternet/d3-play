@@ -26,7 +26,7 @@
     <script src="script.js"></script>
     <svg id="chart-svg" width="100%"></svg>
     <!-- <svg id="chart-svg" width="100%"></svg> -->
-    <div id="slidecontainer">
+    <div id="config">
         <input type="range" min="2" max="600" value="100" class="slider" id="lines-range">
         <p>Lines: <span id="lines-text"></span></p>
         <input type="range" min="1" max="30" value="3" class="slider" id="strokeWidth-range">
@@ -70,11 +70,30 @@
         update(chart);
     };
 
+    var addColourListener = function(i) {
+        var colourPicker = document.getElementById("color-" + i);
+        colourPicker.addEventListener("change", function(event) {
+            chart.colours[i] = d3.color(event.target.value);
+            update(chart);
+        }, false);
+    };
+
+    const coloursLength = 2;
+    for (var i = 0; i < coloursLength; i++) {
+        var container = document.getElementById("config");
+        var input = document.createElement("input");
+        input.type = "color";
+        input.id = "color-" + i;
+        container.appendChild(input); // put it into the DOM
+        addColourListener(i);
+    }
+
+
     var chart = {
         "selector": "svg g.chart",
         "colours": [
-            d3.hsl(169.9983, 1, 0.6),
-            d3.hsl(239.99976, 1, 0.6),
+            d3.color("black"),
+            d3.color("grey"),
         ],
         "strokeWidth": 3,
         "lines": linesSlider.value,

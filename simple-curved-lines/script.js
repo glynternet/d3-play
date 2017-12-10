@@ -84,6 +84,7 @@ function update(chart) {
         .attr("class", "enter")
         .attr("fill", "none")
         .attr("stroke", "white")
+        .attr("stroke-linecap","round")
 
     // ENTER + UPDATE
     // After merging the entered elements with the update selection,
