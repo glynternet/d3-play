@@ -58,14 +58,8 @@ function update(chart) {
         .curve(d3.curveCatmullRom.alpha(1));
 
 
-    const colours = [
-    	d3.hsl(25, 1, 0.6),
-    	d3.rgb(255, 0, 0),
-    	d3.rgb(0, 255, 0),
-    ];
-
     // a scale that maps index of a line to a colour
-    var colourScale = generateColourScale(colours);
+    var colourScale = generateColourScale(chart.colours);
 
     // DATA JOIN
     // Join new data with old elements, if any.
@@ -111,7 +105,14 @@ function update(chart) {
 
 // a scale that maps index of a line to a colour
 function generateColourScale(colours) {
+	// if no colours given, default to black
+	if (colours === null || colours === undefined ) {
+		return function(i) { return d3.color("black"); };
+	}
 	var len = colours.length;
+	if (len == 1) {
+		return function(i) { return colours[0]; };
+	}
 	var domains = [];
 	// Push values to domains array so that we have an array containing values from 0 to number of lines.
 	// There must be the same number of elements as in the colours array

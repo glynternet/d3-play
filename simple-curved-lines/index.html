@@ -23,9 +23,7 @@
 </head>
 
 <body>
-
     <script src="script.js"></script>
-
     <svg id="chart-svg" width="100%"></svg>
     <!-- <svg id="chart-svg" width="100%"></svg> -->
     <div id="slidecontainer">
@@ -62,8 +60,12 @@
     };
 
     var chart = {
-        "selector" : "svg g.chart",
-        "strokeWidth" : 3,
+        "selector": "svg g.chart",
+        "colours": [
+            d3.hsl(169.9983, 1, 0.6),
+            d3.hsl(239.99976, 1, 0.6),
+        ],
+        "strokeWidth": 3,
         "lines": linesSlider.value,
         "skew": skewSlider.value,
         "secondPointDistance": secondPointDistanceSlider.value
