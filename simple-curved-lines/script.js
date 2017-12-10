@@ -16,10 +16,9 @@ function update(chart) {
         return (i + skew * skewCoefficient) * period;
     };
 
-    const chartSelector = "svg g.chart";
-    var svg = d3.select(chartSelector);
+    var svg = d3.select(chart.selector);
     if (svg === null) {
-        console.log("Unable to find " + chartSelector);
+        console.log("Unable to find " + chart.selector);
         return;
     }
 
@@ -83,7 +82,6 @@ function update(chart) {
     path.enter()
     	.append("path")
         .attr("class", "enter")
-        .attr("stroke-width", chart.strokeWidth)
         .attr("fill", "none")
         .attr("stroke", "white")
 
@@ -92,6 +90,7 @@ function update(chart) {
     // apply operations to both.
         .merge(path)
         .transition(t)
+        .attr("stroke-width", chart.strokeWidth)
         .attr("stroke", function(d, i) { return colourScale(i); })
         .attr("d", function(d, i) { return lineFunction(newLineData(d).line); });
 

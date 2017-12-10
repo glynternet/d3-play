@@ -29,6 +29,8 @@
     <div id="slidecontainer">
         <input type="range" min="2" max="600" value="100" class="slider" id="lines-range">
         <p>Lines: <span id="lines-text"></span></p>
+        <input type="range" min="1" max="30" value="3" class="slider" id="strokeWidth-range">
+        <p>Stoke Width: <span id="strokeWidth-text"></span></p>
         <input type="range" min="0" max="1000" value="300" class="slider" id="skew-range">
         <p>Skew: <span id="skew-text"></span></p>
         <input type="range" min="0" max="1" value="0.25" step="0.005" class="slider" id="secondPointDistance-range">
@@ -40,6 +42,15 @@
     linesSlider.oninput = function() {
         linesOutput.innerHTML = this.value;
         chart.lines = this.value;
+        update(chart);
+    };
+
+    var strokeWidthSlider = document.getElementById("strokeWidth-range");
+    var strokeWidthOutput = document.getElementById("strokeWidth-text");
+    strokeWidthOutput.innerHTML = strokeWidthSlider.value;
+    strokeWidthSlider.oninput = function() {
+        strokeWidthOutput.innerHTML = this.value;
+        chart.strokeWidth = this.value;
         update(chart);
     };
 
