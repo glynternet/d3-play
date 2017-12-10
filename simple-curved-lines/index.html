@@ -10,7 +10,6 @@
     <title>Title</title>
     <link type="text/css" rel="stylesheet" href="style.css" />
     <script src="../d3.v4.min.js"></script>
-
     <style type="text/css">
     * {
         box-sizing: border-box;
@@ -24,23 +23,19 @@
 </head>
 
 <body>
+
+    <script src="script.js"></script>
+
     <svg id="chart-svg" width="100%"></svg>
+    <!-- <svg id="chart-svg" width="100%"></svg> -->
     <div id="slidecontainer">
         <input type="range" min="2" max="600" value="100" class="slider" id="lines-range">
         <p>Lines: <span id="lines-text"></span></p>
         <input type="range" min="0" max="1000" value="300" class="slider" id="skew-range">
         <p>Skew: <span id="skew-text"></span></p>
-        <input type="range" min="1" max="700" value="150" class="slider" id="secondPointDistance-range">
-        <p>Second Point Distance: <span id="secondPointDistance-text"></span></p>
+        <input type="range" min="0" max="1" value="0.25" step="0.005" class="slider" id="secondPointDistance-range">
     </div>
     <script>
-
-    var chart = {
-        "lines": 100,
-        "skew": 300,
-        "secondPointDistance": 150
-    };
-
     var linesSlider = document.getElementById("lines-range");
     var linesOutput = document.getElementById("lines-text");
     linesOutput.innerHTML = linesSlider.value;
@@ -61,14 +56,26 @@
 
     var secondPointDistanceSlider = document.getElementById("secondPointDistance-range");
     var secondPointDistanceOutput = document.getElementById("secondPointDistance-text");
-    secondPointDistanceOutput.innerHTML = secondPointDistanceSlider.value;
     secondPointDistanceSlider.oninput = function() {
-        secondPointDistanceOutput.innerHTML = this.value;
         chart.secondPointDistance = this.value;
         update(chart);
     };
+
+    var chart = {
+        "lines": linesSlider.value,
+        "skew": skewSlider.value,
+        "secondPointDistance": secondPointDistanceSlider.value
+    };
+
+    var margin = { top: 20, right: 20, bottom: 20, left: 20 };
+    var height = 700 - margin.top - margin.bottom;
+
+    var svg = d3.select("svg")
+        .attr("height", height + margin.top + margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("class", "chart");
     </script>
-    <script src="script.js"></script>
 </body>
 
 </html>

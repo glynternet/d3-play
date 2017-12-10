@@ -1,13 +1,3 @@
-var margin = { top: 20, right: 20, bottom: 20, left: 20 };
-var height = 700 - margin.top - margin.bottom;
-
-var svg = d3.select("svg")
-    // .attr("width", "100%")
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .attr("class", "chart");
-
 function update(chart) {
     console.log(chart);
     if (chart.lines != parseInt(chart.lines, 10)) {
@@ -15,7 +5,7 @@ function update(chart) {
         return;
     }
 
-    var width = document.getElementById("chart-svg").width.animVal.value;
+    width = document.getElementById("chart-svg").width.animVal.value;
 
     const period = (width - (margin.left + margin.right)) / (chart.lines - 1 + +chart.skew);
     const c1 = d3.hsl(25, 1, 0.6);
@@ -34,8 +24,8 @@ function update(chart) {
         return {
             "line": [
                 { "x": x1, "y": 0 },
-                { "x": x1, "y": chart.secondPointDistance },
-                { "x": x2, "y": height - chart.secondPointDistance },
+                { "x": x1, "y": height * chart.secondPointDistance },
+                { "x": x2, "y": height * (1 - chart.secondPointDistance) },
                 { "x": x2, "y": height }
             ]
         };
@@ -92,5 +82,7 @@ function update(chart) {
 
     // EXIT
     // Remove old elements as needed.
-    path.exit().remove();
+    path.exit().transition(t)
+    		.attr("stroke", d3.rgb(255, 255, 255, 0))
+	        .remove();
 }
