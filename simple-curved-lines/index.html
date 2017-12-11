@@ -21,8 +21,7 @@
 
 <body>
     <script src="script.js"></script>
-    <svg id="chart-svg" width="100%"></svg>
-    <!-- <svg id="chart-svg" width="100%"></svg> -->
+    <svg xmlns="http://www.w3.org/2000/svg" id="chart-svg" width="4956" height="3505"></svg>
     <div id="config">
         <input type="range" min="2" max="1000" value="100" class="slider" id="lines-range">
         <p>Lines: <span id="lines-text"></span></p>
@@ -31,6 +30,7 @@
         <input type="range" min="0" max="1000" value="300" class="slider" id="skew-range">
         <p>Skew: <span id="skew-text"></span></p>
         <input type="range" min="0" max="1" value="0.25" step="0.005" class="slider" id="secondPointDistance-range">
+        <p>Second Point: <span id="secondPointDistance-text"></span></p>
     </div>
     <script>
     var linesSlider = document.getElementById("lines-range");
@@ -63,6 +63,7 @@
     var secondPointDistanceSlider = document.getElementById("secondPointDistance-range");
     var secondPointDistanceOutput = document.getElementById("secondPointDistance-text");
     secondPointDistanceSlider.oninput = function() {
+        secondPointDistanceOutput.innerHTML = this.value;
         chart.secondPointDistance = this.value;
         update(chart);
     };
@@ -99,10 +100,11 @@
     };
 
     var margin = { top: 20, right: 20, bottom: 20, left: 20 };
-    var height = 1000 - margin.top - margin.bottom;
+    var totalHeight = +document.getElementById("chart-svg").getAttribute("height");
+    var height = totalHeight - margin.top - margin.bottom;
 
     var svg = d3.select("svg")
-        .attr("height", height + margin.top + margin.bottom)
+        // .attr("height", height + margin.top + margin.bottom)
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .attr("class", "chart");
