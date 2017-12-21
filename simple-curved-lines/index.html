@@ -20,18 +20,22 @@
 </head>
 
 <body>
-    <script src="script.js"></script>
-    <svg xmlns="http://www.w3.org/2000/svg" id="chart-svg" width="4956" height="3505"></svg>
+    <div>
+        <svg xmlns="http://www.w3.org/2000/svg" id="chart-svg" width="1755" height="1245"></svg>
+    </div>
     <div id="config">
-        <input type="range" min="2" max="1000" value="100" class="slider" id="lines-range">
+        <input type="range" class="slider" id="lines-range">
         <p>Lines: <span id="lines-text"></span></p>
-        <input type="range" min="1" max="30" value="3" class="slider" id="strokeWidth-range">
+        <input type="range" min="1" max="30" value="1" class="slider" id="strokeWidth-range">
         <p>Stoke Width: <span id="strokeWidth-text"></span></p>
-        <input type="range" min="0" max="1000" value="300" class="slider" id="skew-range">
+        <input type="range" class="slider" id="skew-range">
         <p>Skew: <span id="skew-text"></span></p>
-        <input type="range" min="0" max="1" value="0.25" step="0.005" class="slider" id="secondPointDistance-range">
+        <input type="range" min="0" max="1" step="0.005" class="slider" id="secondPointDistance-range">
         <p>Second Point: <span id="secondPointDistance-text"></span></p>
     </div>
+    <button id="generate">Save as SVG</button>
+    <script src="/Blob.js"></script>
+    <script src="/FileSaver.js"></script>
     <script>
     var linesSlider = document.getElementById("lines-range");
     var linesOutput = document.getElementById("lines-text");
@@ -41,6 +45,13 @@
         chart.lines = this.value;
         update(chart);
     };
+
+    const maxLines = 150;
+    const minLines = 2;
+    linesSlider.setAttribute("max", maxLines);
+    linesSlider.setAttribute("min", minLines);
+    linesSlider.value = d3.scaleLinear().range([minLines,maxLines])(Math.random());
+    linesOutput.innerHTML = linesSlider.value;
 
     var strokeWidthSlider = document.getElementById("strokeWidth-range");
     var strokeWidthOutput = document.getElementById("strokeWidth-text");
@@ -60,6 +71,13 @@
         update(chart);
     };
 
+    const maxSkew = 600;
+    const minSkew = 0;
+    skewSlider.setAttribute("max", maxSkew);
+    skewSlider.setAttribute("min", minSkew);
+    skewSlider.value = d3.scaleLinear().range([minSkew,maxSkew])(Math.random());
+    skewOutput.innerHTML = skewSlider.value;
+
     var secondPointDistanceSlider = document.getElementById("secondPointDistance-range");
     var secondPointDistanceOutput = document.getElementById("secondPointDistance-text");
     secondPointDistanceSlider.oninput = function() {
@@ -67,6 +85,8 @@
         chart.secondPointDistance = this.value;
         update(chart);
     };
+    secondPointDistanceSlider.value = Math.random() / 2.0;
+
 
     var addColourListener = function(i) {
         var colourPicker = document.getElementById("color-" + i);
@@ -86,28 +106,72 @@
         addColourListener(i);
     }
 
+    function getRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+    }
+
+    var colours = [
+        d3.rgb(61, 170, 60),
+        d3.rgb(212,175,55),
+        d3.rgb(0, 0, 200),
+        d3.rgb(255, 255, 215),
+        d3.rgb(255, 255, 235),
+        d3.rgb(255, 255, 255),
+        d3.rgb(245, 20, 20),
+        d3.rgb(220, 220, 220),
+        d3.rgb(151, 23, 39),
+    ];
+
+    function getRandomColor() {
+        var i = getRandomInt(0, colours.length);
+        return colours[i];
+    }
+
+    var randomColours = [];
+    randomColours.push(getRandomColor());
+    randomColours.push(getRandomColor());
+
+    var urlParams = new URLSearchParams(window.location.search);
+    var txt = urlParams.get('text');
+    var repeated = txt;
+    for (var k = 150 - 1; k >= 0; k--) {
+        repeated = repeated + " " + txt;
+    }
 
     var chart = {
         "selector": "svg g.chart",
-        "colours": [
-            d3.color("black"),
-            d3.color("grey"),
-        ],
+        "colours": randomColours,
+        "background_colour": getRandomColor(),
         "strokeWidth": 3,
         "lines": linesSlider.value,
         "skew": skewSlider.value,
-        "secondPointDistance": secondPointDistanceSlider.value
+        "secondPointDistance": secondPointDistanceSlider.value,
+        "text":repeated,
     };
 
     var margin = { top: 20, right: 20, bottom: 20, left: 20 };
     var totalHeight = +document.getElementById("chart-svg").getAttribute("height");
     var height = totalHeight - margin.top - margin.bottom;
 
-    var svg = d3.select("svg")
-        // .attr("height", height + margin.top + margin.bottom)
+    var container = d3.select("svg");
+
+    var rect = container.append("rect")
+        .attr("id", "chart-background")
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .style("fill", chart.background_colour);
+
+    var svg = container
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .attr("class", "chart");
+    </script>
+    <script src="script.js"></script>
+    <script type="text/javascript">
+        setTimeout(function(){update(chart);}, 1000);
+        setTimeout(function(){writeDownloadLink("wrapping_" + txt);}, 2000);
     </script>
 </body>
 

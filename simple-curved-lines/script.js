@@ -4,6 +4,7 @@ function update(chart) {
         return;
     }
 
+    console.log(chart);
     width = document.getElementById("chart-svg").width.animVal.value;
 
     // ensure that skew is interpreted as a number
@@ -20,6 +21,11 @@ function update(chart) {
         console.log("Unable to find " + chart.selector);
         return;
     }
+
+    svg.style("font-family","Helvetica, Arial, sans-serif");
+
+    d3.select("#chart-background")
+    .style("fill",chart.background_colour);
 
     // The data for our lines
     // The data for this is just consecutive integers from 0
@@ -83,11 +89,16 @@ function update(chart) {
 
     var text = groupEnter
         .append("text")
+        .attr("font-size", "13px")
         .append("textPath") //append a textPath to the text element
         .attr("xlink:href", function(d, i) { return "#" + idFn(i); } ) //place the ID of the path here
         .style("text-anchor", "middle") //place the text halfway on the arc
         .attr("startOffset", "50%")
-        .text("TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY :) TILLY");
+        .attr("stroke", "none")
+        .attr("stroke", function(d, i) { return colourScale(i); })
+        // .attr("fill", function(d, i) { return getRandomColor(); })
+        // .attr("fill", function(d, i) { return colourScale(i); })
+        .text(chart.text);
 
     // ENTER + UPDATE
     // After merging the entered elements with the update selection,
@@ -161,3 +172,28 @@ function newLineData(i, xFn) {
         ]
     };
 }
+
+function writeDownloadLink(name){
+    try {
+        var isFileSaverSupported = !!new Blob();
+    } catch (e) {
+        alert("blob not supported");
+    }
+
+    chartSVG = d3.select("#chart-svg");
+    console.log(chartSVG);
+
+    var html = chartSVG
+        .attr("title", "test2")
+        .attr("version", 1.1)
+        .attr("xmlns", "http://www.w3.org/2000/svg")
+        .node().parentNode.innerHTML;
+
+    var blob = new Blob([html], {type: "image/svg+xml"});
+    saveAs(blob, name + ".svg");
+}
+
+var genButton = d3.select("#generate");
+console.log(genButton);
+genButton.on("click", writeDownloadLink);
+
