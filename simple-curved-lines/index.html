@@ -46,11 +46,11 @@
         update(chart);
     };
 
-    const maxLines = 150;
+    const maxLines = 250;
     const minLines = 2;
     linesSlider.setAttribute("max", maxLines);
     linesSlider.setAttribute("min", minLines);
-    linesSlider.value = d3.scaleLinear().range([minLines,maxLines])(Math.random());
+    linesSlider.value = d3.scaleLinear().range([minLines, maxLines])(Math.random());
     linesOutput.innerHTML = linesSlider.value;
 
     var strokeWidthSlider = document.getElementById("strokeWidth-range");
@@ -75,7 +75,7 @@
     const minSkew = 0;
     skewSlider.setAttribute("max", maxSkew);
     skewSlider.setAttribute("min", minSkew);
-    skewSlider.value = d3.scaleLinear().range([minSkew,maxSkew])(Math.random());
+    skewSlider.value = d3.scaleLinear().range([minSkew, maxSkew])(Math.random());
     skewOutput.innerHTML = skewSlider.value;
 
     var secondPointDistanceSlider = document.getElementById("secondPointDistance-range");
@@ -96,15 +96,25 @@
         }, false);
     };
 
+    var container = document.getElementById("config");
+
     const coloursLength = 2;
     for (var i = 0; i < coloursLength; i++) {
-        var container = document.getElementById("config");
         var input = document.createElement("input");
         input.type = "color";
         input.id = "color-" + i;
         container.appendChild(input); // put it into the DOM
         addColourListener(i);
     }
+
+    var input = document.createElement("input");
+    input.type = "color";
+    input.id = "background_colour";
+    container.appendChild(input); // put it into the DOM
+    input.addEventListener("change", function(event) {
+        chart.background_colour = d3.color(event.target.value);
+        update(chart);
+    }, false);
 
     function getRandomInt(min, max) {
         min = Math.ceil(min);
@@ -114,7 +124,7 @@
 
     var colours = [
         d3.rgb(61, 170, 60),
-        d3.rgb(212,175,55),
+        d3.rgb(212, 175, 55),
         d3.rgb(0, 0, 200),
         d3.rgb(255, 255, 215),
         d3.rgb(255, 255, 235),
@@ -143,7 +153,7 @@
     var chart = {
         "selector": "svg g.chart",
         "colours": randomColours,
-        "background_colour": getRandomColor(),
+        "background_colour": d3.color("white"),
         "strokeWidth": 3,
         "lines": linesSlider.value,
         "skew": skewSlider.value,
@@ -170,8 +180,8 @@
     </script>
     <script src="script.js"></script>
     <script type="text/javascript">
-        setTimeout(function(){update(chart);}, 1000);
-        setTimeout(function(){writeDownloadLink("wrapping_" + txt);}, 2000);
+    setTimeout(function() { update(chart); }, 1000);
+    setTimeout(function() { writeDownloadLink("wrapping_" + txt); }, 2000);
     </script>
 </body>
 

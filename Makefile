@@ -2,4 +2,4 @@ serve:
 	http-server -p8889
 
 push:
-	aws s3 sync --delete  ./ s3://glynternet  --exclude ".git/*"
+	aws s3 --profile=glynternet sync --delete  ./ s3://glynternet  --exclude ".git/*"
