@@ -1,1 +1,0 @@
-Simple Gist template to create and publish visualizations with D3.js.

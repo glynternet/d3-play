@@ -21,7 +21,7 @@
 
 <body>
     <div>
-        <svg xmlns="http://www.w3.org/2000/svg" id="chart-svg" width="1755" height="1245"></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" id="chart-svg" width="888" height="630"></svg>
     </div>
     <div id="config">
         <input type="range" class="slider" id="lines-range">
@@ -43,6 +43,7 @@
     linesSlider.oninput = function() {
         linesOutput.innerHTML = this.value;
         chart.lines = this.value;
+        console.log("Lines updated:", this.value);
         update(chart);
     };
 
@@ -50,7 +51,7 @@
     const minLines = 2;
     linesSlider.setAttribute("max", maxLines);
     linesSlider.setAttribute("min", minLines);
-    linesSlider.value = d3.scaleLinear().range([minLines, maxLines])(Math.random());
+    linesSlider.value = 64;
     linesOutput.innerHTML = linesSlider.value;
 
     var strokeWidthSlider = document.getElementById("strokeWidth-range");
@@ -59,6 +60,7 @@
     strokeWidthSlider.oninput = function() {
         strokeWidthOutput.innerHTML = this.value;
         chart.strokeWidth = this.value;
+        console.log("Stroke width updated:", this.value);
         update(chart);
     };
 
@@ -68,6 +70,7 @@
     skewSlider.oninput = function() {
         skewOutput.innerHTML = this.value;
         chart.skew = this.value;
+        console.log("Skew updated:", this.value);
         update(chart);
     };
 
@@ -75,7 +78,7 @@
     const minSkew = 0;
     skewSlider.setAttribute("max", maxSkew);
     skewSlider.setAttribute("min", minSkew);
-    skewSlider.value = d3.scaleLinear().range([minSkew, maxSkew])(Math.random());
+    skewSlider.value = 103;
     skewOutput.innerHTML = skewSlider.value;
 
     var secondPointDistanceSlider = document.getElementById("secondPointDistance-range");
@@ -83,9 +86,10 @@
     secondPointDistanceSlider.oninput = function() {
         secondPointDistanceOutput.innerHTML = this.value;
         chart.secondPointDistance = this.value;
+        console.log("Second point updated:", this.value);
         update(chart);
     };
-    secondPointDistanceSlider.value = Math.random() / 2.0;
+    secondPointDistanceSlider.value = 0.22;
 
 
     var addColourListener = function(i) {
@@ -144,17 +148,20 @@
     randomColours.push(getRandomColor());
 
     var urlParams = new URLSearchParams(window.location.search);
-    var txt = urlParams.get('text');
-    var repeated = txt;
-    for (var k = 150 - 1; k >= 0; k--) {
-        repeated = repeated + " " + txt;
+    var text = urlParams.get('text');
+    var repeated;
+    for (var k = 30; k >= 0; k--) {
+        repeated += text;
     }
+
+    const red = d3.rgb(200, 33, 33);
+    const white = d3.color("white");
 
     var chart = {
         "selector": "svg g.chart",
-        "colours": randomColours,
-        "background_colour": d3.color("white"),
-        "strokeWidth": 3,
+        "colours": [red],
+        "background_colour": white,
+        "strokeWidth": strokeWidthSlider.value,
         "lines": linesSlider.value,
         "skew": skewSlider.value,
         "secondPointDistance": secondPointDistanceSlider.value,
@@ -167,21 +174,22 @@
 
     var container = d3.select("svg");
 
-    var rect = container.append("rect")
-        .attr("id", "chart-background")
-        .attr("width", "100%")
-        .attr("height", "100%")
-        .style("fill", chart.background_colour);
+    if (chart.background_colour) {
+        var rect = container.append("rect")
+            .attr("id", "chart-background")
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .style("fill", chart.background_colour);
+    }
 
     var svg = container
         .append("g")
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .attr("class", "chart");
     </script>
-    <script src="script.js"></script>
+    <script src="script.js?version=20>"></script>
     <script type="text/javascript">
-    setTimeout(function() { update(chart); }, 1000);
-    setTimeout(function() { writeDownloadLink("wrapping_" + txt); }, 2000);
+    setTimeout(function() { update(chart); }, 500);
     </script>
 </body>
 

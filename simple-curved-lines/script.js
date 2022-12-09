@@ -23,9 +23,12 @@ function update(chart) {
     }
 
     svg.style("font-family","Helvetica, Arial, sans-serif");
+    svg.style("font-weight","lighter");
 
-    d3.select("#chart-background")
-    .style("fill",chart.background_colour);
+    if (chart.background_colour) {
+        d3.select("#chart-background")
+            .style("fill",chart.background_colour);
+    }
 
     // The data for our lines
     // The data for this is just consecutive integers from 0
@@ -55,12 +58,6 @@ function update(chart) {
             return d;
         });
 
-    // create new transition instance.
-    // This can't be global, it must be generated on each run of update.
-    var t = d3.transition()
-        .duration(200)
-        .ease(d3.easeQuadInOut);
-
     // UPDATE
     // Update old elements as needed.
     group.attr("class", "update")
@@ -70,9 +67,6 @@ function update(chart) {
     var groupEnter = group.enter()
         .append("g")
         .attr("class", "enter")
-        .attr("opacity", 0);
-
-    groupEnter.transition(t)
         .attr("opacity", 1);
 
     var idFn = function (i) { return "path-" + i; };
@@ -89,15 +83,12 @@ function update(chart) {
 
     var text = groupEnter
         .append("text")
-        .attr("font-size", "13px")
+        .attr("font-size", "14px")
         .append("textPath") //append a textPath to the text element
         .attr("xlink:href", function(d, i) { return "#" + idFn(i); } ) //place the ID of the path here
         .style("text-anchor", "middle") //place the text halfway on the arc
         .attr("startOffset", "50%")
-        .attr("stroke", "none")
-        .attr("stroke", function(d, i) { return colourScale(i); })
-        // .attr("fill", function(d, i) { return getRandomColor(); })
-        // .attr("fill", function(d, i) { return colourScale(i); })
+        .attr("fill", function(d, i) { return colourScale(i); })
         .text(chart.text);
 
     // ENTER + UPDATE
@@ -106,7 +97,6 @@ function update(chart) {
     groupEnter.merge(group)
         // .attr("opacity",1)
         .select("path")
-        .transition(t)
         .attr("stroke-width", chart.strokeWidth)
         .attr("stroke", "none")
         // .attr("stroke", function(d, i) { return colourScale(i); })
@@ -116,7 +106,6 @@ function update(chart) {
     groupEnter.merge(group)
         // .attr("opacity",1)
         .select("text")
-        .transition(t)
         .attr("stroke", function(d, i) { return colourScale(i); });
 
 
@@ -124,12 +113,10 @@ function update(chart) {
     // Remove old elements as needed.
     group.exit()
         .select("path")
-        .transition(t)
         .attr("d", function(d, i) { return lineFunction(newLineData(chart.lines - 1, x).line); });
 
     group.exit()
         .attr("class", "exit")
-        .transition(t)
         // fade to transparent
         .attr("opacity", 0)
         .remove();
